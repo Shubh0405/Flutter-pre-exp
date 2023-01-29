@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import './transaction.dart';
-import 'package:intl/intl.dart';
+import 'widgets/transaction_list.dart';
+import 'models/transaction.dart';
+import 'widgets/new_transaction.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,14 +19,39 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  final List<Transaction> transactions = [
+class MyHomePage extends StatefulWidget {
+  MyHomePage({super.key});
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final List<Transaction> _userTransaction = [
     Transaction(
         id: "t1", title: "Recharge", amount: 599.0, date: DateTime.now()),
     Transaction(id: "t2", title: "Netflix", amount: 999.9, date: DateTime.now())
   ];
 
-  MyHomePage({super.key});
+  void _addTransaction(String txTitle, double txAmount) {
+    final newTx = Transaction(
+        id: DateTime.now().toString(),
+        title: txTitle,
+        amount: txAmount,
+        date: DateTime.now());
+
+    setState(() {
+      _userTransaction.add(newTx);
+    });
+  }
+
+  void startAddNewTransaction(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return NewTransation(addTx: _addTransaction);
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,84 +59,22 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Personal Expenses"),
       ),
-      body: Column(
-        children: [
-          Container(
-              width: double.infinity,
-              height: 10.0,
-              color: Colors.red,
-              child: const Center(child: Text("Welcome back!"))),
-          Card(
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const TextField(
-                    decoration: InputDecoration(labelText: 'Title'),
-                  ),
-                  const TextField(
-                    decoration: InputDecoration(labelText: 'Amount'),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: TextButton(
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.all<EdgeInsets>(
-                              const EdgeInsets.all(12)),
-                          overlayColor: MaterialStateColor.resolveWith(
-                              (states) => Color.fromARGB(255, 241, 208, 247)),
-                        ),
-                        onPressed: (() {}),
-                        child: const Text(
-                          'Add Transaction',
-                          style: TextStyle(color: Colors.purple),
-                        )),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Column(
-            children: transactions.map((tx) {
-              return Card(
-                child: Row(
-                  children: [
-                    Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 15.0, horizontal: 15.0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.purple, width: 2)),
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text(
-                            style: const TextStyle(
-                                color: Colors.purple,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
-                            '\$${tx.amount.toString()}')),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Text(
-                            tx.title,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                        ),
-                        Text(DateFormat.yMEd().add_jms().format(tx.date),
-                            style: const TextStyle(color: Colors.grey))
-                      ],
-                    )
-                  ],
-                ),
-              );
-            }).toList(),
-          )
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+                width: double.infinity,
+                height: 10.0,
+                color: Colors.red,
+                child: const Center(child: Text("Welcome back!"))),
+            TransactionList(userTransaction: _userTransaction)
+          ],
+        ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () => startAddNewTransaction(context)),
     );
   }
 }
