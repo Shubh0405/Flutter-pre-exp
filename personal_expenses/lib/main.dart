@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'widgets/chart.dart';
 import 'widgets/transaction_list.dart';
 import 'models/transaction.dart';
 import 'widgets/new_transaction.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       title: 'Personal Expenses',
       theme: ThemeData(
           primarySwatch: Colors.purple,
+          primaryColor: Colors.purple,
           fontFamily: 'Amaranth',
           appBarTheme: AppBarTheme(
               titleTextStyle: TextStyle(
@@ -43,6 +45,12 @@ class _MyHomePageState extends State<MyHomePage> {
     //     id: "t1", title: "Recharge", amount: 599.0, date: DateTime.now()),
     // Transaction(id: "t2", title: "Netflix", amount: 999.9, date: DateTime.now())
   ];
+
+  List<Transaction> get _recentTransactions {
+    return _userTransaction.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
 
   void _addTransaction(String txTitle, double txAmount) {
     final newTx = Transaction(
@@ -97,11 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             : Column(
                 children: [
-                  Container(
-                      width: double.infinity,
-                      height: 10.0,
-                      color: Colors.red,
-                      child: const Center(child: Text("Welcome back!"))),
+                  Chart(userTransaction: _recentTransactions),
                   TransactionList(userTransaction: _userTransaction)
                 ],
               ),
