@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'widgets/transaction_list.dart';
 import 'models/transaction.dart';
@@ -15,7 +17,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Personal Expenses',
-      theme: ThemeData(primarySwatch: Colors.purple),
+      theme: ThemeData(
+          primarySwatch: Colors.purple,
+          fontFamily: 'Amaranth',
+          appBarTheme: AppBarTheme(
+              titleTextStyle: TextStyle(
+                  fontFamily: 'Amaranth',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 23))),
       home: MyHomePage(),
     );
   }
@@ -30,9 +39,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransaction = [
-    Transaction(
-        id: "t1", title: "Recharge", amount: 599.0, date: DateTime.now()),
-    Transaction(id: "t2", title: "Netflix", amount: 999.9, date: DateTime.now())
+    // Transaction(
+    //     id: "t1", title: "Recharge", amount: 599.0, date: DateTime.now()),
+    // Transaction(id: "t2", title: "Netflix", amount: 999.9, date: DateTime.now())
   ];
 
   void _addTransaction(String txTitle, double txAmount) {
@@ -59,19 +68,43 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Personal Expenses"),
+        centerTitle: true,
+        title: const Text(
+          "Personal Expenses",
+        ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-                width: double.infinity,
-                height: 10.0,
-                color: Colors.red,
-                child: const Center(child: Text("Welcome back!"))),
-            TransactionList(userTransaction: _userTransaction)
-          ],
-        ),
+        child: _userTransaction.isEmpty
+            ? Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Text(
+                      "No Transactions found!",
+                      style: TextStyle(
+                        fontSize: 25,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Image.asset("assets/images/image1.png")
+                  ],
+                ),
+              )
+            : Column(
+                children: [
+                  Container(
+                      width: double.infinity,
+                      height: 10.0,
+                      color: Colors.red,
+                      child: const Center(child: Text("Welcome back!"))),
+                  TransactionList(userTransaction: _userTransaction)
+                ],
+              ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
