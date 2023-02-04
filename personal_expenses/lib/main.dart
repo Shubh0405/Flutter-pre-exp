@@ -26,7 +26,19 @@ class MyApp extends StatelessWidget {
               titleTextStyle: TextStyle(
                   fontFamily: 'Amaranth',
                   fontWeight: FontWeight.bold,
-                  fontSize: 23))),
+                  fontSize: 23)),
+          textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                  padding: MaterialStateProperty.all<EdgeInsets>(
+                      const EdgeInsets.all(12)),
+                  // overlayColor: MaterialStateColor.resolveWith(
+                  //     (states) => Color.fromARGB(255, 241, 208, 247)),
+                  backgroundColor: MaterialStateProperty.resolveWith((states) {
+                    return Colors.purple;
+                  }),
+                  foregroundColor: MaterialStateProperty.resolveWith((states) {
+                    return Colors.white;
+                  })))),
       home: MyHomePage(),
     );
   }
@@ -52,12 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addTransaction(String txTitle, double txAmount) {
+  void _addTransaction(String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
         id: DateTime.now().toString(),
         title: txTitle,
         amount: txAmount,
-        date: DateTime.now());
+        date: chosenDate);
 
     setState(() {
       _userTransaction.add(newTx);
